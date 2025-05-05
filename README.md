@@ -1,126 +1,134 @@
-# CyberSentry - Gelişmiş Ağ İstihbarat Aracı
+# CyberSentry - Advanced Network Intelligence Suite
 
-![Sürüm](https://img.shields.io/badge/sürüm-1.0.0-blue)
-![Lisans](https://img.shields.io/badge/lisans-MIT-green)
+![Version](https://img.shields.io/badge/version-1.0.0-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
 
-CyberSentry (eski adıyla PySecurity), ağ güvenliği ve adli bilişim alanında çeşitli işlevler sunan komut satırı tabanlı bir siber güvenlik aracıdır. Güvenlik profesyonelleri, ağ yöneticileri ve siber güvenlik meraklıları için tasarlanmıştır.
+CyberSentry (formerly PySecurity) is a command-line cybersecurity tool that offers various functions in network security and digital forensics. It is designed for security professionals, network administrators, and cybersecurity enthusiasts.
 
-## Özellikler
+## Features
 
-CyberSentry, modern ve kullanıcı dostu bir arayüz ile aşağıdaki özellikleri sunar:
+CyberSentry provides the following features with a modern and user-friendly interface:
 
-### DNS İşlemleri
-- **Ters DNS Araması:** IP adresine karşılık gelen domain adlarını sorgulama
-- **DNS Sorgulama:** Domain adına karşılık gelen IP adreslerini sorgulama
-- **Zone Transfer:** DNS bölge transferini test etme
-- **DNS Host Kayıtları:** Domain için DNS host kayıtlarını listeleme
-- **DNS Kayıtları:** Tüm DNS kayıtlarını görüntüleme
-- **DNS Güvenlik Kontrolü:** DNSSEC doğrulaması yapma
+### DNS Operations
+- **Reverse DNS Lookup:** Query domain names corresponding to IP addresses
+- **DNS Lookup:** Query IP addresses corresponding to domain names
+- **Zone Transfer:** Test DNS zone transfer
+- **DNS Host Records:** List DNS host records for a domain
+- **DNS Records:** View all DNS records
+- **DNS Security Check:** Perform DNSSEC validation
 
-### Ağ İşlemleri
-- **IP Coğrafi Konum:** IP adresinin coğrafi konumunu tespit etme
-- **Ters IP Sorgulama:** IP adresine bağlı domainleri listeleme
-- **ASN Sorgulama:** Otonom Sistem Numarası bilgilerini sorgulama
-- **Gizlilik API:** IP gizlilik bilgilerini kontrol etme
-- **IPv6 Proxy Kontrolü:** IPv6 adreslerinin proxy olup olmadığını kontrol etme
-- **Port Tarayıcı:** Hedef sistemde açık portları tarama
+### Network Operations
+- **IP Geolocation:** Identify the geographical location of an IP address
+- **Reverse IP Lookup:** List domains associated with an IP address
+- **ASN Lookup:** Query Autonomous System Number information
+- **Privacy API:** Check IP privacy information
+- **IPv6 Proxy Check:** Check if IPv6 addresses are proxies
+- **Port Scanner:** Scan for open ports on target systems
 
-### Güvenlik Kontrolleri
-- **Email Doğrulayıcı:** Email adreslerinin geçerliliğini kontrol etme
-- **Veri Sızıntısı Kontrolü:** Email adresinin veri sızıntılarında yer alıp almadığını kontrol etme
-- **DMARC Sorgulama:** Domain DMARC kayıtlarını kontrol etme
-- **TLS Tarama:** TLS/SSL yapılandırmasını analiz etme
-- **JS Güvenlik Tarayıcı:** JavaScript güvenlik sorunlarını kontrol etme
-- **URL Bypasser:** Kısaltılmış URL'lerin gerçek hedeflerini tespit etme
-- **SSL Sertifika Bilgisi:** SSL sertifikalarının detaylarını kontrol etme
+### Security Checks
+- **Email Validator:** Verify the validity of email addresses
+- **Data Breach Check:** Check if an email address has been involved in data breaches
+- **DMARC Lookup:** Check domain DMARC records
+- **TLS Scan:** Analyze TLS/SSL configuration
+- **JS Security Scanner:** Check for JavaScript security issues
+- **URL Bypasser:** Identify the real targets of shortened URLs
+- **SSL Certificate Info:** Check details of SSL certificates
 
-### Ek Özellikler
-- **Toplu Tarama:** Birden fazla hedefi tek seferde tarama
-- **Zamanlanmış Görevler:** Taramaları belirli zaman aralıklarında otomatik olarak gerçekleştirme
-- **Geçmiş:** Önceki taramaların sonuçlarını görüntüleme
-- **Veri Dışa Aktarma:** Sonuçları HTML, JSON veya TXT formatında dışa aktarma
-- **Güncellemeleri Kontrol Etme:** En son sürüm kontrolü
+### Additional Features
+- **Batch Scan:** Scan multiple targets at once
+- **Scheduled Tasks:** Automatically perform scans at specific time intervals
+- **History:** View results of previous scans
+- **Export Data:** Export results in HTML, JSON, or TXT format
+- **Check for Updates:** Check for the latest version
 
-### Sistem Özellikleri
-- Modern, ok tuşlarıyla gezinilebilen menü sistemi
-- Çoklu dil desteği (İngilizce ve Türkçe)
-- Tamamen özelleştirilebilir konfigürasyon sistemi
-- HTML, JSON ve TXT formatlarında rapor oluşturma
-- Eşzamanlı tarama desteği
+### System Features
+- Modern, arrow key-navigable menu system
+- Multilingual support (13 languages including English, Turkish, Russian, Chinese, etc.)
+- Fully customizable configuration system
+- Report generation in HTML, JSON, and TXT formats
+- Concurrent scanning support
 
-## Kurulum
+## Installation
 
-### Gereksinimler
-- Python 3.6 veya üzeri
+### Requirements
+- Python 3.6 or higher
 
-### Kurulum Adımları
+### Installation Steps
 
-1. Repo'yu klonlayın:
+1. Clone the repository:
 ```
 git clone https://github.com/raventrk/CyberSentry.git
 cd CyberSentry
 ```
 
-2. Gerekli kütüphaneleri yükleyin:
+2. Install required libraries:
 ```
 pip install -r config/requirements.txt
 ```
 
-3. Uygulamayı başlatın:
+3. Start the application:
 ```
 python PySecurity.py
 ```
 
-Windows kullanıcıları için `start.bat` dosyasını çalıştırarak da uygulamayı başlatabilirsiniz.
+Windows users can also run the `start.bat` file to start the application.
 
-## Kullanım
+## Usage
 
-Uygulama çalıştırıldığında, ok tuşları ve Enter tuşu ile menüde gezinebilirsiniz:
+When the application is running, you can navigate the menu using arrow keys and Enter key:
 
-1. Ana menüden bir kategori seçin (DNS İşlemleri, Ağ İşlemleri, vb.)
-2. Alt menüden istediğiniz işlevi seçin
-3. İstenilen bilgileri girin (IP, domain, vb.)
-4. Sonuçlarınızı görüntüleyin ve gerekirse raporlayın
+1. Select a category from the main menu (DNS Operations, Network Operations, etc.)
+2. Select the desired function from the submenu
+3. Enter the requested information (IP, domain, etc.)
+4. View your results and report if necessary
 
-### API Anahtarları
+### API Keys
 
-Bazı işlevler için API anahtarları gerekebilir:
+Some functions may require API keys:
 - `hackertarget`
 - `ipinfo`
 - `hibp` (Have I Been Pwned)
 
-Bu API anahtarlarını `config/config.json` dosyasında ilgili alanlara ekleyebilirsiniz.
+You can add these API keys to the respective fields in the `config/config.json` file.
 
-## Konfigürasyon
+## Configuration
 
-`config/config.json` dosyası aracılığıyla aşağıdaki ayarları özelleştirebilirsiniz:
+You can customize the following settings through the `config/config.json` file:
 
-- Dil seçimi (en, tr)
-- Rapor kaydetme seçenekleri
-- Rapor formatı (HTML, JSON, TXT)
-- Otomatik güncelleme kontrolü
-- Eşzamanlı görev limiti
-- İstek zaman aşımı süresi
+- Language selection (13 supported languages)
+- Report saving options
+- Report format (HTML, JSON, TXT)
+- Automatic update check
+- Concurrent task limit
+- Request timeout duration
 
-## Desteklenen Diller
+## Supported Languages
 
-- İngilizce (English)
-- Türkçe
+- English
+- Turkish
+- Russian
+- Chinese
+- German
+- Azerbaijani
+- Japanese
+- Hindi
+- French
+- Spanish
+- Korean
+- Latin
+- Greek
 
-Yeni dil eklemek için `config/languages.json` dosyasına çeviri ekleyebilirsiniz.
+To add a new language, you can add translations to the `config/languages.json` file.
 
-## Lisans
+## License
 
-Bu proje MIT lisansı altında lisanslanmıştır.
+This project is licensed under the MIT License.
 
-## Katkıda Bulunanlar
+## Contributors
 
-- [GitHub Kullanıcı Adı](https://github.com/kullaniciadi)
+- [RavenTrk](https://github.com/raventrk)
 
-## İletişim
-
-Sorularınız veya geri bildirimleriniz için [e-posta adresi] adresine e-posta gönderebilirsiniz.
 
 ---
 
-**Not**: CyberSentry (PySecurity) eğitim ve test amaçlı tasarlanmıştır. Kötü amaçlı kullanımdan veya yanlış kullanımdan doğabilecek sonuçlardan kullanıcı sorumludur. Her zaman yasal sınırlar içerisinde ve gerekli izinleri alarak kullanınız. 
+**Note**: CyberSentry (CyberSentry) is designed for educational and testing purposes. The user is responsible for any consequences that may arise from malicious use or misuse. Always use within legal boundaries and with necessary permissions. 
