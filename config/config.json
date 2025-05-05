@@ -1,0 +1,23 @@
+{
+    "settings": {
+        "language": "en",
+        "save_reports": true,
+        "report_format": "html",
+        "reports_folder": "reports",
+        "history_folder": "history",
+        "auto_update": true,
+        "update_check_interval_days": 7,
+        "default_timeout": 10,
+        "max_concurrent_tasks": 3
+    },
+    "api_keys": {
+        "hackertarget": "",
+        "ipinfo": "",
+        "hibp": ""
+    },
+    "last_update_check": "2025-05-05",
+    "language_options": [
+        "en",
+        "tr"
+    ]
+}
