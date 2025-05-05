@@ -335,8 +335,27 @@ def change_language():
     language_options = config.get("language_options", ["en", "tr"])
     print(f"\n{Fore.CYAN}{_('available_languages')}:{Fore.RESET}")
     
+    # Dillerin kendi dillerindeki isimleri
+    language_native_names = {
+        "en": "English",
+        "tr": "Türkçe",
+        "ru": "Русский",
+        "zh": "中文",
+        "de": "Deutsch",
+        "az": "Azərbaycan",
+        "ja": "日本語",
+        "hi": "हिन्दी",
+        "fr": "Français",
+        "es": "Español",
+        "ko": "한국어",
+        "la": "Latina",
+        "el": "Ελληνικά"
+    }
+    
+    # Dilleri kendi isimlerinde ve orijinal kodlarıyla gösteriyoruz
     for i, lang in enumerate(language_options):
-        print(f"{Fore.WHITE}[{Fore.RED}{i}{Fore.WHITE}]{Fore.RESET} {lang}")
+        native_name = language_native_names.get(lang, lang)
+        print(f"{Fore.WHITE}[{Fore.RED}{i}{Fore.WHITE}]{Fore.RESET} {native_name} ({lang})")
     
     try:
         choice = int(input(f"\n{Fore.MAGENTA}{_('choose_option')}: {Fore.RESET}"))
@@ -344,7 +363,7 @@ def change_language():
             current_language = language_options[choice]
             config["settings"]["language"] = current_language
             save_config()
-            print(f"{Fore.GREEN}{_('language_changed')}: {current_language}{Fore.RESET}")
+            print(f"{Fore.GREEN}{_('language_changed')}: {language_native_names.get(current_language, current_language)} ({current_language}){Fore.RESET}")
             load_translations()
         else:
             print(f"{Fore.RED}{_('invalid_option')}{Fore.RESET}")
