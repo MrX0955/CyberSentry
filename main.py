@@ -3,13 +3,8 @@ import os
 import json
 import socket
 import time
-import sys
 import datetime
-import threading
 import concurrent.futures
-import shutil
-import webbrowser
-from pathlib import Path
 from colorama import Fore, init, Style
 import ssl
 import inquirer
@@ -19,7 +14,7 @@ init(autoreset=True)
 CONFIG_DIR = "config"
 CONFIG_FILE = os.path.join(CONFIG_DIR, "config.json")
 LANGUAGES_FILE = os.path.join(CONFIG_DIR, "languages.json")
-VERSION = "1.0.0"
+VERSION = "1.5.0"
 config = {}
 current_language = "en"
 translations = {}

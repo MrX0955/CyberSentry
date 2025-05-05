@@ -1,6 +1,6 @@
 # CyberSentry - Advanced Network Intelligence Suite
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue)
+![Version](https://img.shields.io/badge/version-1.5.0-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
 CyberSentry (formerly PySecurity) is a command-line cybersecurity tool that offers various functions in network security and digital forensics. It is designed for security professionals, network administrators, and cybersecurity enthusiasts.
