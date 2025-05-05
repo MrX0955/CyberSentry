@@ -16,7 +16,6 @@ import inquirer
 
 init(autoreset=True)
 
-# Global variables
 CONFIG_DIR = "config"
 CONFIG_FILE = os.path.join(CONFIG_DIR, "config.json")
 LANGUAGES_FILE = os.path.join(CONFIG_DIR, "languages.json")
@@ -30,7 +29,6 @@ def clear():
 
 clear()
 
-# Load configuration
 def load_config():
     global config, current_language
     try:
@@ -39,13 +37,11 @@ def load_config():
                 config = json.load(f)
                 current_language = config.get("settings", {}).get("language", "en")
                 
-                # Create necessary folders
                 for folder in ["reports", "history"]:
                     folder_path = config.get("settings", {}).get(f"{folder}_folder", folder)
                     if not os.path.exists(folder_path):
                         os.makedirs(folder_path)
                         
-                # Load translations
                 load_translations()
                 
                 return True
@@ -57,7 +53,6 @@ def load_config():
         print(f"{Fore.RED}Error loading configuration: {e}{Fore.RESET}")
         return False
 
-# Create default configuration
 def create_default_config():
     default_config = {
         "settings": {
@@ -81,7 +76,6 @@ def create_default_config():
     }
     
     try:
-        # Ensure config directory exists
         if not os.path.exists(CONFIG_DIR):
             os.makedirs(CONFIG_DIR)
             
@@ -89,14 +83,12 @@ def create_default_config():
             json.dump(default_config, f, indent=4)
             print(f"{Fore.GREEN}Default configuration created.{Fore.RESET}")
             
-        # Create necessary folders
         for folder in ["reports", "history"]:
             if not os.path.exists(folder):
                 os.makedirs(folder)
     except Exception as e:
         print(f"{Fore.RED}Error creating default configuration: {e}{Fore.RESET}")
 
-# Save configuration
 def save_config():
     try:
         with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
@@ -106,7 +98,6 @@ def save_config():
         print(f"{Fore.RED}Error saving configuration: {e}{Fore.RESET}")
         return False
 
-# Load language translations
 def load_translations():
     global translations
     try:
@@ -117,17 +108,14 @@ def load_translations():
             print(f"{Fore.YELLOW}Language file not found. Using default translations.{Fore.RESET}")
     except Exception as e:
         print(f"{Fore.RED}Error loading translations: {e}{Fore.RESET}")
-        # Use default English translations as fallback
         translations = {
             "en": {
                 "menu_title": "CyberSentry - Advanced Network Intelligence Suite",
                 "github": "GitHub",
                 "exit": "Exit CyberSentry",
-                # Add more default translations as needed
             }
         }
 
-# Translate function
 def _(key):
     return translations.get(current_language, {}).get(key, key)
 
@@ -149,7 +137,6 @@ class Settings:
 def print_menu():
     clear()
     
-    # Ana kategori seçimleri
     categories = [
         inquirer.List(
             'category',
@@ -165,10 +152,8 @@ def print_menu():
         )
     ]
     
-    # Ana kategori seçimi
     answers = inquirer.prompt(categories)
     
-    # Eğer kullanıcı iptal ettiyse (Ctrl+C)
     if answers is None:
         print(f"\n{Fore.CYAN}{_('closing')}!{Fore.RESET}")
         time.sleep(1)
@@ -181,9 +166,8 @@ def print_menu():
         time.sleep(1)
         exit()
     elif selected_category == 'settings':
-        return 25  # Ayarlar menüsü
+        return 25  
     
-    # Alt kategori seçimleri - her kategori için ayrı tanımlama
     if selected_category == 'dns':
         dns_questions = [
             inquirer.List(
@@ -256,7 +240,6 @@ def print_menu():
         ]
         subcategory_result = inquirer.prompt(additional_questions)
     
-    # Ctrl+C ile iptal durumunu kontrol et
     if subcategory_result is None:
         print(f"\n{Fore.CYAN}{_('closing')}!{Fore.RESET}")
         time.sleep(1)
@@ -265,9 +248,9 @@ def print_menu():
     selected_subcategory = subcategory_result['subcategory']
     
     if selected_subcategory == 'back':
-        return print_menu()  # Ana menüye dön
+        return print_menu()
     
-    return selected_subcategory  # Seçilen işlevi döndür
+    return selected_subcategory
 
 def get_validated_input(prompt, validation_func):
     while True:
@@ -281,7 +264,6 @@ def make_request(url, params=None, data=None, headers=None, method="GET", timeou
     try:
         print(f"{Fore.LIGHTYELLOW_EX}\n > {_('waiting_results')}{Fore.LIGHTGREEN_EX}")
         
-        # Simple progress indicator
         print(f"{Fore.CYAN}[{_('progress')}] {Fore.RESET}", end="", flush=True)
         for i in range(5):
             print("▓", end="", flush=True)
@@ -292,7 +274,6 @@ def make_request(url, params=None, data=None, headers=None, method="GET", timeou
         elif method == "POST":
             response = requests.post(url, data=data, headers=headers, timeout=timeout)
                 
-        # Complete progress indicator
         for i in range(5):
             print("▓", end="", flush=True)
             time.sleep(0.05)
@@ -310,14 +291,12 @@ def process_and_print_request(url, params=None, data=None, headers=None, method=
         result = response
         print(f"\n{result}\n| >> {_('continue_prompt')}.")
         
-        # Save to history
         save_to_history("api_request", {
             "url": url,
             "method": method,
             "response": result
         })
         
-        # Option to save a report
         if config.get("settings", {}).get("save_reports", True):
             save_report("api_request", {
                 "url": url,
@@ -335,7 +314,6 @@ def change_language():
     language_options = config.get("language_options", ["en", "tr"])
     print(f"\n{Fore.CYAN}{_('available_languages')}:{Fore.RESET}")
     
-    # Dillerin kendi dillerindeki isimleri
     language_native_names = {
         "en": "English",
         "tr": "Türkçe",
@@ -352,7 +330,6 @@ def change_language():
         "el": "Ελληνικά"
     }
     
-    # Dilleri kendi isimlerinde ve orijinal kodlarıyla gösteriyoruz
     for i, lang in enumerate(language_options):
         native_name = language_native_names.get(lang, lang)
         print(f"{Fore.WHITE}[{Fore.RED}{i}{Fore.WHITE}]{Fore.RESET} {native_name} ({lang})")
@@ -378,16 +355,13 @@ def save_report(report_type, data):
         reports_folder = config.get("settings", {}).get("reports_folder", "reports")
         report_format = config.get("settings", {}).get("report_format", "html")
         
-        # Create folder if doesn't exist
         if not os.path.exists(reports_folder):
             os.makedirs(reports_folder)
         
-        # Generate filename
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"{reports_folder}/{report_type}_{timestamp}.{report_format}"
         
         if report_format == "html":
-            # Create HTML report
             html_content = f"""
             <!DOCTYPE html>
             <html>
@@ -439,11 +413,9 @@ def save_to_history(action_type, data):
     try:
         history_folder = config.get("settings", {}).get("history_folder", "history")
         
-        # Create folder if doesn't exist
         if not os.path.exists(history_folder):
             os.makedirs(history_folder)
         
-        # Generate history file for today
         today = datetime.datetime.now().strftime("%Y%m%d")
         history_file = f"{history_folder}/history_{today}.json"
         
@@ -455,14 +427,12 @@ def save_to_history(action_type, data):
                 except:
                     history_data = []
         
-        # Add new entry
         history_data.append({
             "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             "action": action_type,
             "data": data
         })
         
-        # Save updated history
         with open(history_file, 'w', encoding='utf-8') as f:
             json.dump(history_data, f, indent=4)
         
@@ -481,8 +451,7 @@ def view_history():
             input(f"\n{_('continue_prompt')}")
             clear()
             return
-        
-        # List all history files
+
         history_files = sorted(os.listdir(history_folder), reverse=True)
         if not history_files:
             print(f"{Fore.YELLOW}{_('no_history')}{Fore.RESET}")
@@ -552,7 +521,6 @@ def export_data():
             clear()
             return
         
-        # List all history files
         history_files = sorted(os.listdir(history_folder), reverse=True)
         if not history_files:
             print(f"{Fore.YELLOW}{_('no_history')}{Fore.RESET}")
@@ -585,12 +553,12 @@ def export_data():
                 date_str = selected_file.replace("history_", "").replace(".json", "")
                 export_filename = f"export_{date_str}"
                 
-                if format_choice == 1:  # JSON
+                if format_choice == 1:  
                     export_path = f"{export_filename}.json"
                     with open(export_path, 'w', encoding='utf-8') as f:
                         json.dump(history_data, f, indent=4)
                 
-                elif format_choice == 2:  # CSV
+                elif format_choice == 2:  
                     export_path = f"{export_filename}.csv"
                     with open(export_path, 'w', encoding='utf-8', newline='') as f:
                         import csv
@@ -604,7 +572,7 @@ def export_data():
                                 str(entry.get("data", {}))
                             ])
                 
-                elif format_choice == 3:  # HTML
+                elif format_choice == 3:  
                     export_path = f"{export_filename}.html"
                     html_content = f"""
                     <!DOCTYPE html>
@@ -675,38 +643,32 @@ def check_for_updates():
     try:
         print(f"{Fore.CYAN}{_('checking_updates')}{Fore.RESET}")
         
-        # Simüle edilmiş ilerleme çubuğu
         print(f"{Fore.CYAN}[{_('progress')}] {Fore.RESET}", end="", flush=True)
         for i in range(5):
             print("▓", end="", flush=True)
             time.sleep(0.1)
         
-        # GitHub API kullanarak güncellemeleri kontrol et
         repo_url = "https://api.github.com/repos/raventrk/CyberSentry/releases/latest"
         
         try:
             response = requests.get(repo_url, headers=Settings.headers2, timeout=config.get("settings", {}).get("default_timeout", 10))
-            response.raise_for_status()  # HTTP hatasını yakala
+            response.raise_for_status()
             
-            # Kalan ilerleme çubuğu
             for i in range(5):
                 print("▓", end="", flush=True)
                 time.sleep(0.05)
             print(f" {Fore.GREEN}100%{Fore.RESET}")
             
-            # API yanıtını işle
             release_data = response.json()
             latest_version = release_data.get("tag_name", "").replace("v", "").strip()
             
-            # Eğer sürüm numarası boşsa veya geçersizse
             if not latest_version:
-                latest_version = VERSION  # Mevcut sürümü kullan (güncel olarak göster)
+                latest_version = VERSION
             
             if latest_version > VERSION:
                 print(f"{Fore.YELLOW}{_('update_available')} v{latest_version} (current: v{VERSION}){Fore.RESET}")
                 print(f"{Fore.CYAN}Download: {release_data.get('html_url')}{Fore.RESET}")
                 
-                # Release notlarını göster (varsa)
                 if release_data.get("body"):
                     print(f"\n{Fore.CYAN}Release Notes:{Fore.RESET}")
                     print(f"{Fore.WHITE}{release_data.get('body')[:300]}{'...' if len(release_data.get('body')) > 300 else ''}{Fore.RESET}")
@@ -714,7 +676,6 @@ def check_for_updates():
                 print(f"{Fore.GREEN}{_('up_to_date')} (v{VERSION}){Fore.RESET}")
         
         except requests.exceptions.RequestException as e:
-            # Kalan ilerleme çubuğu (hata durumunda)
             for i in range(5):
                 print("▓", end="", flush=True)
                 time.sleep(0.05)
@@ -723,7 +684,6 @@ def check_for_updates():
             print(f"{Fore.RED}GitHub API'ye erişilemiyor: {e}{Fore.RESET}")
             print(f"{Fore.YELLOW}İnternet bağlantınızı kontrol edin veya daha sonra tekrar deneyin.{Fore.RESET}")
         
-        # Son kontrol tarihini güncelle
         config["last_update_check"] = datetime.datetime.now().strftime("%Y-%m-%d")
         save_config()
     
@@ -764,14 +724,12 @@ def batch_scan():
             clear()
             return
         
-        # Configure max concurrent tasks
         max_workers = config.get("settings", {}).get("max_concurrent_tasks", 3)
         
         print(f"\n{Fore.CYAN}Starting batch scan of {len(targets)} targets with {max_workers} concurrent workers...{Fore.RESET}")
         
         scan_results = []
         
-        # Define what function to use based on scan type
         if scan_type == 1:
             scan_func = "port_scan"
         elif scan_type == 2:
@@ -779,32 +737,25 @@ def batch_scan():
         elif scan_type == 3:
             scan_func = "ssl_certificate_info"
             
-        # Create a simple progress indicator
         print(f"{Fore.CYAN}[{_('progress')}] {Fore.RESET}", end="", flush=True)
         
-        # Use ThreadPoolExecutor for concurrent processing
+        
         with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
-            # For demonstration, we'll just collect the targets
-            # In a real implementation, you would call the appropriate function
+            
             futures = []
             
             for target in targets:
-                # This is a placeholder - in real code, call the actual function
-                # future = executor.submit(globals()[scan_func], target)
-                # futures.append(future)
                 
-                # Simulate processing for demonstration
                 future = executor.submit(lambda t: {"target": t, "result": f"Sample result for {t}"}, target)
                 futures.append(future)
             
-            # Process results as they complete
             completed = 0
             for future in concurrent.futures.as_completed(futures):
                 try:
                     result = future.result()
                     scan_results.append(result)
                     completed += 1
-                    # Update progress indicator
+                    
                     progress_percent = completed * 100 // len(targets)
                     progress_bar = "▓" * (completed * 10 // len(targets))
                     print(f"\r{Fore.CYAN}[{_('progress')}] {Fore.RESET}{progress_bar} {progress_percent}%", end="", flush=True)
@@ -812,19 +763,17 @@ def batch_scan():
                     print(f"\n{Fore.RED}Error processing target: {e}{Fore.RESET}")
                     completed += 1
         
-        print()  # New line after progress bar
+        print() 
         
-        # Display results summary
+       
         print(f"\n{Fore.GREEN}Batch scan completed. {len(scan_results)} targets processed.{Fore.RESET}")
         
-        # Save results to history
         save_to_history("batch_scan", {
             "scan_type": scan_type,
             "targets": targets,
             "results": scan_results
         })
         
-        # Option to save a report
         if config.get("settings", {}).get("save_reports", True):
             save_report("batch_scan", {
                 "scan_type": scan_type,
@@ -877,10 +826,9 @@ def schedule_task():
             clear()
             return
         
-        # Get schedule details based on type
         schedule_details = {}
         
-        if schedule_type == 1:  # One-time
+        if schedule_type == 1:
             date_str = input(f"{Fore.CYAN}Enter date (YYYY-MM-DD): {Fore.RESET}").strip()
             time_str = input(f"{Fore.CYAN}Enter time (HH:MM): {Fore.RESET}").strip()
             
@@ -888,7 +836,6 @@ def schedule_task():
                 schedule_datetime = datetime.datetime.strptime(f"{date_str} {time_str}", "%Y-%m-%d %H:%M")
                 schedule_details["datetime"] = schedule_datetime.strftime("%Y-%m-%d %H:%M:%S")
                 
-                # Check if the time is in the future
                 if schedule_datetime <= datetime.datetime.now():
                     print(f"{Fore.RED}Scheduled time must be in the future{Fore.RESET}")
                     input(f"\n{_('continue_prompt')}")
@@ -901,7 +848,7 @@ def schedule_task():
                 clear()
                 return
         
-        elif schedule_type == 2:  # Daily
+        elif schedule_type == 2:  
             time_str = input(f"{Fore.CYAN}Enter time (HH:MM): {Fore.RESET}").strip()
             
             try:
@@ -914,7 +861,7 @@ def schedule_task():
                 clear()
                 return
         
-        elif schedule_type == 3:  # Weekly
+        elif schedule_type == 3: 
             day_of_week = input(f"{Fore.CYAN}Enter day of week (1-7, Monday is 1): {Fore.RESET}").strip()
             time_str = input(f"{Fore.CYAN}Enter time (HH:MM): {Fore.RESET}").strip()
             
@@ -934,7 +881,6 @@ def schedule_task():
                 clear()
                 return
         
-        # Create the scheduled task
         task = {
             "task_type": task_type,
             "target": target,
@@ -944,7 +890,6 @@ def schedule_task():
             "status": "scheduled"
         }
         
-        # Save the task
         tasks_file = "scheduled_tasks.json"
         
         tasks = []
@@ -960,7 +905,6 @@ def schedule_task():
         with open(tasks_file, 'w', encoding='utf-8') as f:
             json.dump(tasks, f, indent=4)
         
-        # Show success message
         if schedule_type == 1:
             print(f"{Fore.GREEN}{_('task_scheduled')}: {schedule_details['datetime']}{Fore.RESET}")
         elif schedule_type == 2:
@@ -1065,7 +1009,7 @@ def settings_menu():
             else:
                 print(f"{Fore.RED}{_('invalid_option')}{Fore.RESET}")
             
-            print()  # Add a blank line
+            print()  
         
         except ValueError:
             print(f"{Fore.RED}{_('invalid_input')}{Fore.RESET}")
@@ -1074,7 +1018,6 @@ def settings_menu():
             print(f"{Fore.RED}{_('error')}: {e}{Fore.RESET}")
             print()
 
-# Define missing functions for all menu options
 def reverseDNS():
     clear()
     print(f"{Fore.CYAN}{_('reverse_dns')}{Fore.RESET}\n")
@@ -1144,7 +1087,6 @@ def emailvalid():
     email = input(f"{Fore.MAGENTA}{_('enter_email')}: {Fore.RESET}")
     
     if email:
-        # Basic email format validation
         if "@" in email and "." in email.split("@")[1]:
             url = f"https://api.2ip.me/email.txt?email={email}"
             process_and_print_request(url, headers=Settings.headers)
@@ -1181,7 +1123,6 @@ def DMARC():
         try:
             print(f"{Fore.LIGHTYELLOW_EX}\n > {_('waiting_results')}{Fore.LIGHTGREEN_EX}")
             
-            # Try to get DMARC record
             try:
                 answers = socket.getaddrinfo(f"_dmarc.{domain}", None)
                 has_dmarc = True
@@ -1193,7 +1134,6 @@ def DMARC():
             else:
                 print(f"\n{Fore.RED}No DMARC record found for {domain}{Fore.RESET}")
                 
-            # Save to history
             save_to_history("dmarc_lookup", {
                 "domain": domain,
                 "has_dmarc": has_dmarc
@@ -1258,7 +1198,6 @@ def JSVuln():
     url_input = input(f"{Fore.MAGENTA}{_('enter_url')}: {Fore.RESET}")
     
     if url_input:
-        # This is a simple simulation
         print(f"{Fore.YELLOW}Scanning JavaScript resources on {url_input}...{Fore.RESET}")
         time.sleep(2)
         print(f"{Fore.GREEN}No JavaScript vulnerabilities found.{Fore.RESET}")
@@ -1343,14 +1282,12 @@ def ssl_certificate_info():
         print(f"{Fore.YELLOW}Retrieving SSL certificate information for {domain}...{Fore.RESET}")
         
         try:
-            # Create a context with the highest available SSL/TLS protocol
             context = ssl.create_default_context()
             
             with socket.create_connection((domain, 443)) as sock:
                 with context.wrap_socket(sock, server_hostname=domain) as ssock:
                     cert = ssock.getpeercert()
                     
-                    # Extract and print certificate information
                     subject = dict(item[0] for item in cert['subject'])
                     issuer = dict(item[0] for item in cert['issuer'])
                     
@@ -1359,7 +1296,6 @@ def ssl_certificate_info():
                     print(f"{Fore.GREEN}Not Before: {cert['notBefore']}{Fore.RESET}")
                     print(f"{Fore.GREEN}Not After: {cert['notAfter']}{Fore.RESET}")
                     
-                    # Check if certificate is still valid
                     not_after = datetime.datetime.strptime(cert['notAfter'], '%b %d %H:%M:%S %Y %Z')
                     not_before = datetime.datetime.strptime(cert['notBefore'], '%b %d %H:%M:%S %Y %Z')
                     now = datetime.datetime.now()
@@ -1382,11 +1318,9 @@ def ssl_certificate_info():
         clear()
 
 while True:
-    # Initialize config if not already loaded
     if not config:
         load_config()
     
-    # Check for updates if auto-update is enabled
     if config.get("settings", {}).get("auto_update", True):
         last_check = config.get("last_update_check", "")
         if last_check:
@@ -1396,10 +1330,8 @@ while True:
                 check_interval = config.get("settings", {}).get("update_check_interval_days", 7)
                 
                 if days_since_check >= check_interval:
-                    # Automatic update check
                     check_for_updates()
             except:
-                # In case of any error with date parsing, continue
                 pass
     
     choice = print_menu()

@@ -3,7 +3,6 @@ echo CyberSentry Kurulum Asistanı
 echo ==========================
 echo.
 
-REM Python kurulumunu kontrol et
 python --version > nul 2>&1
 if %errorlevel% neq 0 (
     echo Python kurulu değil! Lütfen Python 3.6 veya üstünü yükleyin.
@@ -16,7 +15,6 @@ if %errorlevel% neq 0 (
 echo Python kurulumu bulundu. Bağımlılıklar yükleniyor...
 echo.
 
-REM Gerekli paketleri yükle
 pip install -r config/requirements.txt
 
 if %errorlevel% neq 0 (

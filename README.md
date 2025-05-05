@@ -68,7 +68,7 @@ pip install -r config/requirements.txt
 
 3. Start the application:
 ```
-python main.py
+python PySecurity.py
 ```
 
 Windows users can also run the `start.bat` file to start the application.
