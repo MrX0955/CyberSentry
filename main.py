@@ -8,6 +8,8 @@ import concurrent.futures
 from colorama import Fore, init, Style
 import ssl
 import inquirer
+import sys
+import shutil
 
 init(autoreset=True)
 
@@ -667,6 +669,117 @@ def check_for_updates():
                 if release_data.get("body"):
                     print(f"\n{Fore.CYAN}Release Notes:{Fore.RESET}")
                     print(f"{Fore.WHITE}{release_data.get('body')[:300]}{'...' if len(release_data.get('body')) > 300 else ''}{Fore.RESET}")
+                
+                update_choice = input(f"\n{Fore.YELLOW}Programı güncellemek istiyor musunuz? (E/H): {Fore.RESET}").strip().upper()
+                
+                if update_choice == "E":
+                    print(f"\n{Fore.CYAN}Güncelleme indiriliyor...{Fore.RESET}")
+                    
+                    try:
+                        # Güncelleme için GitHub'dan zip dosyasını indirme
+                        download_url = release_data.get("zipball_url")
+                        if not download_url:
+                            print(f"{Fore.RED}Güncelleme için indirme bağlantısı bulunamadı.{Fore.RESET}")
+                            input(f"\n{_('continue_prompt')}")
+                            clear()
+                            return
+                        
+                        # Zip dosyasını indirme
+                        print(f"{Fore.CYAN}[{_('progress')}] {Fore.RESET}", end="", flush=True)
+                        update_response = requests.get(download_url, headers=Settings.headers2, stream=True)
+                        update_response.raise_for_status()
+                        
+                        # Zip dosyasını kaydetme
+                        update_file = "update.zip"
+                        with open(update_file, "wb") as f:
+                            total_length = int(update_response.headers.get("content-length", 0))
+                            downloaded = 0
+                            
+                            for i, chunk in enumerate(update_response.iter_content(chunk_size=4096)):
+                                if chunk:
+                                    f.write(chunk)
+                                    downloaded += len(chunk)
+                                    
+                                    if total_length > 0:
+                                        progress = int(50 * downloaded / total_length)
+                                        print(f"\r{Fore.CYAN}[{_('progress')}] {Fore.RESET}{'▓' * progress} {int(100 * downloaded / total_length)}%", end="", flush=True)
+                            
+                            print(f" {Fore.GREEN}100%{Fore.RESET}")
+                        
+                        print(f"\n{Fore.CYAN}Güncelleme dosyası indirildi. Güncelleme başlatılıyor...{Fore.RESET}")
+                        
+                        # Geçici klasör oluştur
+                        temp_dir = "update_temp"
+                        if os.path.exists(temp_dir):
+                            shutil.rmtree(temp_dir)
+                        os.makedirs(temp_dir)
+                        
+                        # Zip dosyasını çıkar
+                        import zipfile
+                        with zipfile.ZipFile(update_file, 'r') as zip_ref:
+                            zip_ref.extractall(temp_dir)
+                        
+                        # Güncelleme klasörünü bul (GitHub zip'inde ana klasör olarak gelir)
+                        extracted_dir = None
+                        for item in os.listdir(temp_dir):
+                            if os.path.isdir(os.path.join(temp_dir, item)):
+                                extracted_dir = os.path.join(temp_dir, item)
+                                break
+                        
+                        if not extracted_dir:
+                            print(f"{Fore.RED}Güncelleme dosyaları çıkarılamadı.{Fore.RESET}")
+                            input(f"\n{_('continue_prompt')}")
+                            clear()
+                            return
+                        
+                        # Güncel program dosyalarını kopyala
+                        print(f"{Fore.CYAN}Dosyalar güncelleniyor...{Fore.RESET}")
+                        
+                        # Mevcut çalışan dosyanın adını al
+                        current_script = os.path.abspath(sys.argv[0])
+                        
+                        # Güncelleme dosyalarını kopyala
+                        for root, dirs, files in os.walk(extracted_dir):
+                            for file in files:
+                                if file.endswith('.py') or file.endswith('.json'):
+                                    src_file = os.path.join(root, file)
+                                    # Hedef klasörü hesapla
+                                    rel_path = os.path.relpath(src_file, extracted_dir)
+                                    dst_file = os.path.join(os.path.dirname(current_script), rel_path)
+                                    
+                                    # Dizin yoksa oluştur
+                                    os.makedirs(os.path.dirname(dst_file), exist_ok=True)
+                                    
+                                    # Dosyayı kopyala
+                                    shutil.copy2(src_file, dst_file)
+                                    print(f"{Fore.GREEN}Güncellendi: {rel_path}{Fore.RESET}")
+                        
+                        # Temizlik
+                        try:
+                            os.remove(update_file)
+                            shutil.rmtree(temp_dir)
+                        except:
+                            pass
+                        
+                        print(f"\n{Fore.GREEN}Güncelleme başarıyla tamamlandı! v{VERSION} -> v{latest_version}{Fore.RESET}")
+                        print(f"{Fore.YELLOW}Değişikliklerin aktif olması için program yeniden başlatılacak.{Fore.RESET}")
+                        
+                        # Yeni versiyonu config'e kaydet
+                        config["current_version"] = latest_version
+                        save_config()
+                        
+                        input(f"\n{Fore.CYAN}Programı yeniden başlatmak için Enter tuşuna basın...{Fore.RESET}")
+                        
+                        # Programı yeniden başlat
+                        python = sys.executable
+                        os.execl(python, python, *sys.argv)
+                        
+                    except Exception as e:
+                        print(f"{Fore.RED}Güncelleme sırasında hata oluştu: {e}{Fore.RESET}")
+                        input(f"\n{_('continue_prompt')}")
+                else:
+                    print(f"{Fore.YELLOW}Güncelleme iptal edildi. Daha sonra tekrar deneyebilirsiniz.{Fore.RESET}")
+                    print(f"{Fore.CYAN}Download: {release_data.get('html_url')}{Fore.RESET}")
             else:
                 print(f"{Fore.GREEN}{_('up_to_date')} (v{VERSION}){Fore.RESET}")
         
