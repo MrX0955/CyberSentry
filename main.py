@@ -85,7 +85,7 @@ def create_default_config():
                 os.makedirs(folder)
     except Exception as e:
         print(f"{Fore.RED}Error creating default configuration: {e}{Fore.RESET}")
-
+print("yigit")
 def save_config():
     try:
         with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
